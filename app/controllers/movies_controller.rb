@@ -11,10 +11,16 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.uniq.pluck(:rating) #get all possible values for movie ratings
+    # if nothing is selected, use all ratings, otherwise use the selected
+    selected_ratings = params[:ratings] ? params[:ratings].keys : @all_ratings
+    # for use in checking the correct boxes - all checked initially
+    @ratings_hash = params[:ratings] ? params[:ratings] : Hash.new(true)
+    # sort by a selected column and highlight the heading
     sortedby = params[:sortedby]
-    @hl_title = sortedby == 'title' ? 'hilite' : ""
-    @hl_date = sortedby == 'release_date' ? 'hilite' : ""
-    @movies = Movie.all.order(sortedby)
+    @hl_title = sortedby == 'title' ? 'hilite' : "" #highlight if sorting by title
+    @hl_date = sortedby == 'release_date' ? 'hilite' : "" #highlight if sorting by date
+    @movies = Movie.where(rating: selected_ratings).order(sortedby)
   end
 
   def new
