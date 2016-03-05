@@ -12,6 +12,8 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) #get all possible values for movie ratings
+    # set initial value for sortedby to avoid redirect loop
+    session[:sortedby] ||= 'title'
     # Use all ratings initially, otherwise use the selected
     session[:selected_ratings] ||= @all_ratings
     session[:selected_ratings] = params[:ratings] ? params[:ratings].keys : session[:selected_ratings]
