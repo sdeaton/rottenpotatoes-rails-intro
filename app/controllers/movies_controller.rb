@@ -12,8 +12,8 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) #get all possible values for movie ratings
-    # Initially sort by title
-    session[:sortedby] ||= 'title'
+    # a boolean to prevent redirect loops on the initial use
+    nosession = (session[:sortedby] == nil) and (session[:ratings] == nil)
     # Use all ratings initially, otherwise use the selected
     session[:selected_ratings] ||= @all_ratings
     session[:selected_ratings] = params[:ratings] ? params[:ratings].keys : session[:selected_ratings]
@@ -23,9 +23,9 @@ class MoviesController < ApplicationController
     # sort by a selected column and highlight the heading
     session[:sortedby] = params[:sortedby] ? params[:sortedby] : session[:sortedby]
     # maintain the proper URI if any parameters are not specified (and flash message)
-  #  flash.keep if (params[:sortedby] == nil) or (params[:ratings] == nil)
-  #  redirect_to movies_path(:sortedby => session[:sortedby], :ratings => session[:ratings_boxes]) if 
-  #     (params[:sortedby] == nil) or (params[:ratings] == nil)
+    flash.keep if ((params[:sortedby] == nil) or (params[:ratings] == nil)) and !nosession
+    redirect_to movies_path(:sortedby => session[:sortedby], :ratings => session[:ratings_boxes]) if 
+       ((params[:sortedby] == nil) or (params[:ratings] == nil)) and !nosession
     @hl_title = session[:sortedby] == 'title' ? 'hilite' : "" #highlight if sorting by title
     @hl_date = session[:sortedby] == 'release_date' ? 'hilite' : "" #highlight if sorting by date
     @movies = Movie.where(rating: session[:selected_ratings]).order(session[:sortedby])
