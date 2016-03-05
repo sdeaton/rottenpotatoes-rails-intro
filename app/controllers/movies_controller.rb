@@ -18,7 +18,7 @@ class MoviesController < ApplicationController
     session[:selected_ratings] ||= @all_ratings
     session[:selected_ratings] = params[:ratings] ? params[:ratings].keys : session[:selected_ratings]
     # for use in checking the correct boxes - all checked initially
-    session[:ratings_boxes] ||= Hash[@all_ratings.map {|tmp| [tmp, true]}]
+    session[:ratings_boxes] ||= Hash[@all_ratings.map {|tmp| [tmp, 1]}]
     session[:ratings_boxes] = params[:ratings] ? params[:ratings] : session[:ratings_boxes]
     # sort by a selected column and highlight the heading
     session[:sortedby] = params[:sortedby] ? params[:sortedby] : session[:sortedby]
