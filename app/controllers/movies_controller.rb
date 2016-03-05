@@ -12,13 +12,13 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) #get all possible values for movie ratings
-    # set initial value for sortedby to avoid redirect loop
+    # Initially sort by title
     session[:sortedby] ||= 'title'
     # Use all ratings initially, otherwise use the selected
     session[:selected_ratings] ||= @all_ratings
     session[:selected_ratings] = params[:ratings] ? params[:ratings].keys : session[:selected_ratings]
     # for use in checking the correct boxes - all checked initially
-    session[:ratings_boxes] ||= Hash.new(true)
+    session[:ratings_boxes] ||= Hash[@all_ratings.map {|tmp| [tmp, true]}]
     session[:ratings_boxes] = params[:ratings] ? params[:ratings] : session[:ratings_boxes]
     # sort by a selected column and highlight the heading
     session[:sortedby] = params[:sortedby] ? params[:sortedby] : session[:sortedby]
